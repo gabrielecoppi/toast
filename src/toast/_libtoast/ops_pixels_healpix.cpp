@@ -10,6 +10,12 @@
 
 #include <accelerator.hpp>
 
+// PI
+#define PI 3.14159265358979323846
+
+// 2*PI
+#define TWOPI 6.28318530717958647693
+
 // 2/PI
 #define TWOINVPI 0.63661977236758134308
 
@@ -80,7 +86,13 @@ void hpix_vec2zphi(double const * vec, double * phi, int * region, double * z,
 
 void hpix_zphi2nest(int64_t nside, int64_t factor, uint64_t * utab, double phi,
                     int region, double z, double rtz, int64_t * pix) {
-    double tt = (phi >= 0.0) ? phi * TWOINVPI : phi * TWOINVPI + 4.0;
+    static const double eps = std::numeric_limits <double>::epsilon();
+    double tol = 10.0 * eps;
+    double phi_mod = ::fmod(phi, TWOPI);
+    if ((phi_mod < tol) && (phi_mod > -tol)) {
+        phi_mod = 0.0;
+    }
+    double tt = (phi_mod >= 0.0) ? phi_mod * TWOINVPI : phi_mod * TWOINVPI + 4.0;
     int64_t x;
     int64_t y;
     double temp1;
@@ -156,7 +168,13 @@ void hpix_zphi2nest(int64_t nside, int64_t factor, uint64_t * utab, double phi,
 
 void hpix_zphi2ring(int64_t nside, int64_t factor, double phi, int region, double z,
                     double rtz, int64_t * pix) {
-    double tt = (phi >= 0.0) ? phi * TWOINVPI : phi * TWOINVPI + 4.0;
+    static const double eps = std::numeric_limits <double>::epsilon();
+    double tol = 10.0 * eps;
+    double phi_mod = ::fmod(phi, TWOPI);
+    if ((phi_mod < tol) && (phi_mod > -tol)) {
+        phi_mod = 0.0;
+    }
+    double tt = (phi_mod >= 0.0) ? phi_mod * TWOINVPI : phi_mod * TWOINVPI + 4.0;
     double tp;
     int64_t longpart;
     double temp1;
